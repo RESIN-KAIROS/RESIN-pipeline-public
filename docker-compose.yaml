@@ -27,13 +27,13 @@ volumes:
       o: bind
 
 services:
-  oneie:
-    image: limteng/oneie_kairos
-    container_name: oneie
-    command: ["python", "/oneie/predict.py", "-i", "/data/input/en/ltf", "-o", "/data/output/en/oneie/", "-l", "en", "--output_hidden"]
-    volumes:
-      - input_dir:/data/input
-      - output_dir:/data/output
+  # oneie:
+  #   image: limteng/oneie_kairos
+  #   container_name: oneie
+  #   command: ["python", "/oneie/predict.py", "-i", "/data/input/en/ltf", "-o", "/data/output/en/oneie/", "-l", "en", "--output_hidden"]
+  #   volumes:
+  #     - input_dir:/data/input
+  #     - output_dir:/data/output
 
   edl_db:
     image: mongo
@@ -48,7 +48,8 @@ services:
     container_name: edl
     links:
       - "edl_db:mongo"
-    command: ["python", "./projs/docker_kairos/kairos.py", "en", "/data/output/en/oneie/m1/mention/en.nam.tab", "/data/output/en/oneie/m1/mention/en.nom.tab", "/data/output/en/oneie/m1/mention/en.pro.tab", "/data/output/en/linking"]
+    # command: ["python", "./projs/docker_kairos/kairos.py", "en", "/data/output/en/oneie/m1/mention/en.nam.tab", "/data/output/en/oneie/m1/mention/en.nom.tab", "/data/output/en/oneie/m1/mention/en.pro.tab", "/data/output/en/linking"]
+    command: ["./wait-for-it.sh", "mongo:27017", "--", "python", "./projs/docker_kairos/kairos.py", "en", "/data/output/en/oneie/m1/mention/en.nam.tab", "/data/output/en/oneie/m1/mention/en.nom.tab", "/data/output/en/oneie/m1/mention/en.pro.tab", "/data/output/en/linking"]
     volumes:
       - edl_data_dir:/data
       - output_dir:/data/output
