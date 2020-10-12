@@ -48,6 +48,9 @@ services:
     container_name: edl
     links:
       - "edl_db:mongo"
+    depends_on:
+      - edl_db
+    
     # command: ["python", "./projs/docker_kairos/kairos.py", "en", "/data/output/en/oneie/m1/mention/en.nam.tab", "/data/output/en/oneie/m1/mention/en.nom.tab", "/data/output/en/oneie/m1/mention/en.pro.tab", "/data/output/en/linking"]
     command: ["./wait-for-it.sh", "mongo:27017", "--", "python", "./projs/docker_kairos/kairos.py", "en", "/data/output/en/oneie/m1/mention/en.nam.tab", "/data/output/en/oneie/m1/mention/en.nom.tab", "/data/output/en/oneie/m1/mention/en.pro.tab", "/data/output/en/linking"]
     volumes:
