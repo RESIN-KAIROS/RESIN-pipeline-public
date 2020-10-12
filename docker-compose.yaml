@@ -1,0 +1,54 @@
+version: "3"
+
+volumes:
+  input_dir:
+    driver: local
+    driver_opts:
+      type: none
+      device: /shared/nas/data/m1/yinglin8/tmpfile/docker-compose/input
+      o: bind
+  output_dir:
+    driver: local
+    driver_opts:
+      type: none
+      device: /shared/nas/data/m1/yinglin8/tmpfile/docker-compose/output
+      o: bind
+  edl_db:
+    driver: local
+    driver_opts:
+      type: none
+      device: /scratch/xiaoman6/tmp/kairos_docker_compose/edl_data/db # ssd on blender07
+      o: bind
+  edl_data_dir:
+    driver: local
+    driver_opts:
+      type: none
+      device: /scratch/xiaoman6/tmp/kairos_docker_compose/edl_data # ssd on blender07
+      o: bind
+
+services:
+  oneie:
+    image: limteng/oneie_kairos
+    container_name: oneie
+    command: ["python", "/oneie/predict.py", "-i", "/data/input/en/ltf", "-o", "/data/output/en/oneie/", "-l", "en", "--output_hidden"]
+    volumes:
+      - input_dir:/data/input
+      - output_dir:/data/output
+
+  edl_db:
+    image: mongo
+    container_name: edl_db
+    logging:
+        driver: none
+    volumes:
+      - edl_db:/data/db
+
+  edl:
+    image: panx27/edl
+    container_name: edl
+    links:
+      - "edl_db:mongo"
+    command: ["python", "./projs/docker_kairos/kairos.py", "en", "/data/output/en/oneie/m1/mention/en.nam.tab", "/data/output/en/oneie/m1/mention/en.nom.tab", "/data/output/en/oneie/m1/mention/en.pro.tab", "/data/output/en/linking"]
+    volumes:
+      - edl_data_dir:/data
+      - output_dir:/data/output
