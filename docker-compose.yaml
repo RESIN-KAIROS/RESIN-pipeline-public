@@ -66,7 +66,7 @@ services:
     container_name: temporal_relation
     working_dir: /roberta_temporal_relation
     command: bash -c "
-      python kairos_temporal_relation_pipeline.py --event_cold_start_filename /data/output/en/coref/event.cs --ltf_path /data/output/en/oneie/m1_m2/mention/en.nam.bio --output_filename /data/output/en/temporal_relation.cs --use_tab
+      python kairos_temporal_relation_pipeline.py --use_wait --wait_path /data/output/en/coref --event_cold_start_filename /data/output/en/coref/event.cs --ltf_path /data/output/en/oneie/m1_m2/mention/en.nam.bio --output_filename /data/output/en/temporal_relation.cs --use_tab
       && python post_processing.py --input_cs /data/output/en/temporal_relation.cs --filtered_output_cs /data/output/en/filtered_temporal_relation.cs
       && python sdf_converter.py --event_cs /data/output/en/coref/event.cs --entity_cs /data/output/en/coref/entity.cs --relation_cs /data/output/en/coref/relation.cs --temporal_cs /data/output/en/filtered_temporal_relation.cs --output_file /data/output/en/graph_g.json"
     volumes:
