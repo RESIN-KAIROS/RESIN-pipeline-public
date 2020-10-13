@@ -17,24 +17,16 @@ volumes:
     driver: local
     driver_opts:
       type: none
-      device: /scratch/xiaoman6/tmp/kairos_docker_compose/edl_data/db # ssd on blender07
+      device: /shared/nas/data/m1/xiaoman6/tmp/20201013_kairos_docker-compose/edl_data/db
       o: bind
   edl_data_dir:
     driver: local
     driver_opts:
       type: none
-      device: /scratch/xiaoman6/tmp/kairos_docker_compose/edl_data # ssd on blender07
+      device: /shared/nas/data/m1/xiaoman6/tmp/20201013_kairos_docker-compose/edl_data
       o: bind
 
 services:
-  # oneie:
-  #   image: limteng/oneie_kairos
-  #   container_name: oneie
-  #   command: ["python", "/oneie/predict.py", "-i", "/data/input/en/ltf", "-o", "/data/output/en/oneie/", "-l", "en", "--output_hidden"]
-  #   volumes:
-  #     - input_dir:/data/input
-  #     - output_dir:/data/output
-
   edl_db:
     image: mongo
     container_name: edl_db
@@ -43,16 +35,40 @@ services:
     volumes:
       - edl_db:/data/db
 
+  oneie:
+    image: limteng/oneie_kairos
+    container_name: oneie
+    command: ["python", "/oneie/predict.py", "-i", "/data/input/en/ltf", "-o", "/data/output/en/oneie/", "-l", "en", "--output_hidden"]
+    volumes:
+      - input_dir:/data/input
+      - output_dir:/data/output
+
   edl:
     image: panx27/edl
     container_name: edl
     links:
       - "edl_db:mongo"
-    depends_on:
-      - edl_db
-    
-    # command: ["python", "./projs/docker_kairos/kairos.py", "en", "/data/output/en/oneie/m1/mention/en.nam.tab", "/data/output/en/oneie/m1/mention/en.nom.tab", "/data/output/en/oneie/m1/mention/en.pro.tab", "/data/output/en/linking"]
-    command: ["./wait-for-it.sh", "mongo:27017", "--", "python", "./projs/docker_kairos/kairos.py", "en", "/data/output/en/oneie/m1/mention/en.nam.tab", "/data/output/en/oneie/m1/mention/en.nom.tab", "/data/output/en/oneie/m1/mention/en.pro.tab", "/data/output/en/linking"]
+    command: ["./wait-for-it.sh", "mongo:27017", "--timeout=15", "--", "python", "./projs/docker_kairos/kairos.py", "en", "/data/output/en/oneie/m1/mention/en.nam.tab", "/data/output/en/oneie/m1/mention/en.nom.tab", "/data/output/en/oneie/m1/mention/en.pro.tab", "/data/output/en/linking"]
     volumes:
       - edl_data_dir:/data
       - output_dir:/data/output
+
+  # coref:
+  #   image: laituan245/kairos_coref
+  #   container_name: kairos_coref
+  #   command: ["/opt/conda/envs/aida_coreference/bin/python3.6", "coref.py", "--ta", "2", "--language", "en", "--oneie_output", "/data/output/en/oneie/m1", "--linking_output", "/data/output/en/linking/en.linking.wikidata.cs", "--coreference_output", "/data/output/en/coref"]
+  #   volumes:
+  #     - input_dir:/data/input
+  #     - output_dir:/data/output
+
+
+  # temporal_relation:
+  #   image: wenhycs/uiuc_kairos_temporal_relation
+  #   container_name: temporal_relation
+  #   working_dir: /roberta_temporal_relation
+  #   command: bash -c "
+  #     python kairos_temporal_relation_pipeline.py --event_cold_start_filename /data/output/en/coref/event.cs --ltf_path /data/output/en/oneie/m1_m2/mention/en.nam.bio --output_filename /data/output/en/temporal_relation.cs --use_tab
+  #     && python post_processing.py --input_cs /data/output/en/temporal_relation.cs --filtered_output_cs /data/output/en/filtered_temporal_relation.cs
+  #     && python sdf_converter.py --event_cs /data/output/en/coref/event.cs --entity_cs /data/output/en/coref/entity.cs --relation_cs /data/output/en/coref/relation.cs --temporal_cs /data/output/en/filtered_temporal_relation.cs --output_file /data/output/en/graph_g.json"
+  #   volumes:
+  #     - output_dir:/data/output
