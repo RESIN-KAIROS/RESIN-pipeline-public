@@ -8,8 +8,8 @@ version: "3"
 
 
 ## Control startup order
-In order to control the startup order, please detect if a `_success` file has been generated from the previous cantainer at the begining of your code. 
-For example,
+To control the startup order, please detect if a `_success` file has been generated from the previous container at the beginning of your code. For example,
+
 
     success_file_path = '%s/_success' % input_dir
     s = time.time()
@@ -23,4 +23,4 @@ And generate a `_success` at the end of your code.
 For example,
 
     with open('%s/_success' % output_dir, 'w') as fw:
-        fw.write()
+        fw.write('')
