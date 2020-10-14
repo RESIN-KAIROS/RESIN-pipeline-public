@@ -1,11 +1,5 @@
 # ta2-pipeline
-## docker-compose version
-Please use version 3
 
-e.g.,
-```
-version: "3"
-```
 ## test input data
 https://drive.google.com/file/d/1Qi_ahiZfDGKO3VCvWMiYdENp7o6w_-B_/view?usp=sharing
 
@@ -13,7 +7,16 @@ https://drive.google.com/file/d/1Qi_ahiZfDGKO3VCvWMiYdENp7o6w_-B_/view?usp=shari
 http://159.89.180.81/demo/resources/edl_data.tar.gz
 
 
-## Control startup order
+## For system developer
+### docker-compose version
+Please use version 3
+
+e.g.,
+```
+version: "3"
+```
+
+### Control startup order
 To control the startup order, please detect if a `_success` file has been generated from the previous container at the beginning of your code. For example,
 
 
