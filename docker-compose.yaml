@@ -1,17 +1,11 @@
 version: "3"
 
 volumes:
-  input_dir:
+  data_dir:
     driver: local
     driver_opts:
       type: none
-      device: /shared/nas/data/m1/yinglin8/tmpfile/docker-compose/input
-      o: bind
-  output_dir:
-    driver: local
-    driver_opts:
-      type: none
-      device: /shared/nas/data/m1/yinglin8/tmpfile/docker-compose/output
+      device: /shared/nas/data/m1/yinglin8/tmpfile/docker-compose/
       o: bind
   edl_db:
     driver: local
@@ -35,39 +29,44 @@ services:
     volumes:
       - edl_db:/data/db
 
+  kairos_data:
+    image: panx27/kairos_data
+    container_name: kairos_data
+    command: ["python", "./download.py"]
+    volumes:
+      - data_dir:/data/resin
+
   oneie:
     image: limteng/oneie_kairos
     container_name: oneie
-    command: ["python", "/oneie/predict.py", "-i", "/data/input/en/ltf", "-o", "/data/output/en/oneie/", "-l", "en", "--output_hidden"]
+    command: ["python", "/oneie/predict.py", "-i", "/data/resin/input/ltf", "-o", "/data/resin/output/oneie", "-l", "en", "--output_hidden"]
     volumes:
-      - input_dir:/data/input
-      - output_dir:/data/output
+      - data_dir:/data/resin
 
   edl:
     image: panx27/edl
     container_name: edl
     links:
       - "edl_db:mongo"
-    command: ["./wait-for-it.sh", "mongo:27017", "--timeout=15", "--", "python", "./projs/docker_kairos/kairos.py", "en", "/data/output/en/oneie/m1/mention/en.nam.tab", "/data/output/en/oneie/m1/mention/en.nom.tab", "/data/output/en/oneie/m1/mention/en.pro.tab", "/data/output/en/linking"]
+    command: ["./wait-for-it.sh", "mongo:27017", "--timeout=15", "--", "python", "./projs/docker_kairos/kairos.py", "en", "/data/resin/output/oneie/m1_m2/mention/en.nam.tab", "/data/resin/output/oneie/m1_m2/mention/en.nom.tab", "/data/resin/output/oneie/m1_m2/mention/en.pro.tab", "/data/resin/output/linking", "m36"]
     volumes:
       - edl_data_dir:/data
-      - output_dir:/data/output
+      - data_dir:/data/resin
 
   coref:
     image: laituan245/kairos_coref
     container_name: kairos_coref
-    command: ["/opt/conda/envs/aida_coreference/bin/python3.6", "coref.py", "--ta", "2", "--language", "en", "--oneie_output", "/data/output/en/oneie/m1", "--linking_output", "/data/output/en/linking/en.linking.wikidata.cs", "--coreference_output", "/data/output/en/coref"]
+    command: ["/opt/conda/envs/aida_coreference/bin/python3.6", "coref.py", "--ta", "2", "--language", "en", "--oneie_output", "/data/resin/output/oneie/m1_m2", "--linking_output", "/data/resin/output/linking/en.linking.wikidata.cs", "--coreference_output", "/data/resin/output/coref"]
     volumes:
-      - input_dir:/data/input
-      - output_dir:/data/output
+      - data_dir:/data/resin
 
   temporal_relation:
     image: wenhycs/uiuc_kairos_temporal_relation
     container_name: temporal_relation
     working_dir: /roberta_temporal_relation
     command: bash -c "
-      python kairos_temporal_relation_pipeline.py --use_wait --wait_path /data/output/en/coref --event_cold_start_filename /data/output/en/coref/event.cs --ltf_path /data/output/en/oneie/m1_m2/mention/en.nam.bio --output_filename /data/output/en/temporal_relation.cs --use_tab
-      && python post_processing.py --input_cs /data/output/en/temporal_relation.cs --filtered_output_cs /data/output/en/filtered_temporal_relation.cs
-      && python sdf_converter.py --event_cs /data/output/en/coref/event.cs --entity_cs /data/output/en/coref/entity.cs --relation_cs /data/output/en/coref/relation.cs --temporal_cs /data/output/en/filtered_temporal_relation.cs --output_file /data/output/en/graph_g.json"
+      python kairos_temporal_relation_pipeline.py --use_wait --wait_path /data/resin/output/coref --event_cold_start_filename /data/resin/output/coref/event.cs --ltf_path /data/resin/output/oneie/m1_m2/mention/en.nam.bio --output_filename /data/resin/output/temporal_relation.cs --use_tab
+      && python post_processing.py --input_cs /data/resin/output/temporal_relation.cs --filtered_output_cs /data/resin/output/filtered_temporal_relation.cs
+      && python sdf_converter.py --event_cs /data/resin/output/coref/event.cs --entity_cs /data/resin/output/coref/entity.cs --relation_cs /data/resin/output/coref/relation.cs --temporal_cs /data/resin/output/filtered_temporal_relation.cs --output_file /data/resin/output/graph_g.json"
     volumes:
-      - output_dir:/data/output
+      - data_dir:/data/resin
