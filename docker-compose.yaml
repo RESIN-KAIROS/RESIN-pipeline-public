@@ -56,7 +56,9 @@ services:
   coref:
     image: laituan245/kairos_coref
     container_name: kairos_coref
-    command: ["/opt/conda/envs/aida_coreference/bin/python3.6", "coref.py", "--ta", "2", "--language", "en", "--oneie_output", "/data/resin/output/en/oneie/m1_m2", "--linking_output", "/data/resin/output/en/linking/en.linking.wikidata.cs", "--coreference_output", "/data/resin/output/en/coref"]
+    command: bash -c "
+      /opt/conda/envs/aida_coreference/bin/python3.6 coref.py --ta 2 --language en --oneie_output /data/resin/output/en/oneie/m1_m2 --linking_output /data/resin/output/en/linking/en.linking.wikidata.cs --coreference_output /data/resin/output/en/coref
+      && /opt/conda/envs/aida_coreference/bin/python3.6 coref.py --ta 2 --language es --oneie_output /data/resin/output/es/oneie/m1_m2 --linking_output /data/resin/output/es/linking/es.linking.wikidata.cs --coreference_output /data/resin/output/es/coref"
     volumes:
       - data_dir:/data/resin
 
