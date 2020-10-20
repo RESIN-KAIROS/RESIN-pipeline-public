@@ -30,31 +30,35 @@ services:
       - edl_db:/data/db
 
   kairos_data:
-    image: panx27/kairos_entrypoint
+    image: panx27/kairos_entrypoint:0.1
     container_name: kairos_data
     command: ["python", "./download.py", "/data/resin"]
     volumes:
       - data_dir:/data/resin
 
   oneie:
-    image: limteng/oneie_kairos
+    image: limteng/oneie_kairos:0.1
     container_name: oneie
-    command: ["python", "/oneie/predict.py", "-i", "/data/resin/input/en/ltf", "-o", "/data/resin/output/en/oneie", "-l", "en", "--output_hidden"]
+    command: bash -c "
+      python /oneie/predict.py -i /data/resin/input/en/ltf -o /data/resin/output/en/oneie -l en --output_hidden
+      && python /oneie/predict.py -i /data/resin/input/es/ltf -o /data/resin/output/es/oneie -l es --output_hidden"
     volumes:
       - data_dir:/data/resin
 
   edl:
-    image: panx27/edl
+    image: panx27/edl:0.1
     container_name: edl
     links:
       - "edl_db:mongo"
-    command: ["./wait-for-it.sh", "mongo:27017", "--timeout=15", "--", "python", "./projs/docker_kairos/kairos.py", "en", "/data/resin/output/en/oneie/m1_m2/mention/en.nam.tab", "/data/resin/output/en/oneie/m1_m2/mention/en.nom.tab", "/data/resin/output/en/oneie/m1_m2/mention/en.pro.tab", "/data/resin/output/en/linking", "m36"]
+    command: ./wait-for-it.sh mongo:27017 --timeout=15 -- bash -c "
+      python ./projs/docker_kairos/kairos.py en /data/resin/output/en/oneie/m1_m2/mention/en.nam.tab /data/resin/output/en/oneie/m1_m2/mention/en.nom.tab /data/resin/output/en/oneie/m1_m2/mention/en.pro.tab /data/resin/output/en/linking m36
+      && python ./projs/docker_kairos/kairos.py es /data/resin/output/es/oneie/m1_m2/mention/es.nam.tab /data/resin/output/es/oneie/m1_m2/mention/es.nom.tab /data/resin/output/es/oneie/m1_m2/mention/es.pro.tab /data/resin/output/es/linking m36"
     volumes:
       - edl_data_dir:/data
       - data_dir:/data/resin
 
   coref:
-    image: laituan245/kairos_coref
+    image: laituan245/kairos_coref:0.1
     container_name: kairos_coref
     command: bash -c "
       /opt/conda/envs/aida_coreference/bin/python3.6 coref.py --ta 2 --language en --oneie_output /data/resin/output/en/oneie/m1_m2 --linking_output /data/resin/output/en/linking/en.linking.wikidata.cs --coreference_output /data/resin/output/en/coref
@@ -63,7 +67,7 @@ services:
       - data_dir:/data/resin
 
   temporal_relation:
-    image: wenhycs/uiuc_kairos_temporal_relation
+    image: wenhycs/uiuc_kairos_temporal_relation:0.1
     container_name: temporal_relation
     working_dir: /roberta_temporal_relation
     command: bash -c "
