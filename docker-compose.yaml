@@ -1,11 +1,11 @@
 version: "3"
 
 volumes:
-  data_dir:
+  root:
     driver: local
     driver_opts:
       type: none
-      device: /shared/nas/data/m1/yinglin8/tmpfile/docker-compose/
+      device: /shared/nas/data/m1/yinglin8/tmpfile/docker-compose/var/kairosfs
       o: bind
   edl_db:
     driver: local
@@ -32,18 +32,18 @@ services:
   kairos_data:
     image: panx27/kairos_entrypoint:0.1
     container_name: kairos_data
-    command: ["python", "./download.py", "/data/resin"]
+    command: ["python", "./download.py", "/var/kairosfs"]
     volumes:
-      - data_dir:/data/resin
+      - root:/var/kairosfs
 
   oneie:
     image: limteng/oneie_kairos:0.1
     container_name: oneie
     command: bash -c "
-      python /oneie/predict.py -i /data/resin/input/en/ltf -o /data/resin/output/en/oneie -l en --output_hidden
-      && python /oneie/predict.py -i /data/resin/input/es/ltf -o /data/resin/output/es/oneie -l es --output_hidden"
+      python /oneie/predict.py -i /var/kairosfs/resin/input/en/ltf -o /var/kairosfs/resin/resin/output/en/oneie -l en --output_hidden
+      && python /oneie/predict.py -i /var/kairosfs/resin/input/es/ltf -o /var/kairosfs/resin/resin/output/es/oneie -l es --output_hidden"
     volumes:
-      - data_dir:/data/resin
+      - root:/var/kairosfs
 
   edl:
     image: panx27/edl:0.1
@@ -51,28 +51,28 @@ services:
     links:
       - "edl_db:mongo"
     command: ./wait-for-it.sh mongo:27017 --timeout=15 -- bash -c "
-      python ./projs/docker_kairos/kairos.py en /data/resin/output/en/oneie/m1_m2/mention/en.nam.tab /data/resin/output/en/oneie/m1_m2/mention/en.nom.tab /data/resin/output/en/oneie/m1_m2/mention/en.pro.tab /data/resin/output/en/linking m36
-      && python ./projs/docker_kairos/kairos.py es /data/resin/output/es/oneie/m1_m2/mention/es.nam.tab /data/resin/output/es/oneie/m1_m2/mention/es.nom.tab /data/resin/output/es/oneie/m1_m2/mention/es.pro.tab /data/resin/output/es/linking m36"
+      python ./projs/docker_kairos/kairos.py en /var/kairosfs/resin/resin/output/en/oneie/m1_m2/mention/en.nam.tab /var/kairosfs/resin/resin/output/en/oneie/m1_m2/mention/en.nom.tab /var/kairosfs/resin/resin/output/en/oneie/m1_m2/mention/en.pro.tab /var/kairosfs/resin/resin/output/en/linking m36
+      && python ./projs/docker_kairos/kairos.py es /var/kairosfs/resin/resin/output/es/oneie/m1_m2/mention/es.nam.tab /var/kairosfs/resin/resin/output/es/oneie/m1_m2/mention/es.nom.tab /var/kairosfs/resin/resin/output/es/oneie/m1_m2/mention/es.pro.tab /var/kairosfs/resin/resin/output/es/linking m36"
     volumes:
       - edl_data_dir:/data
-      - data_dir:/data/resin
+      - root:/var/kairosfs
 
   coref:
     image: laituan245/kairos_coref:0.1
     container_name: kairos_coref
     command: bash -c "
-      /opt/conda/envs/aida_coreference/bin/python3.6 coref.py --ta 2 --language en --oneie_output /data/resin/output/en/oneie/m1_m2 --linking_output /data/resin/output/en/linking/en.linking.wikidata.cs --coreference_output /data/resin/output/en/coref
-      && /opt/conda/envs/aida_coreference/bin/python3.6 coref.py --ta 2 --language es --oneie_output /data/resin/output/es/oneie/m1_m2 --linking_output /data/resin/output/es/linking/es.linking.wikidata.cs --coreference_output /data/resin/output/es/coref"
+      /opt/conda/envs/aida_coreference/bin/python3.6 coref.py --ta 2 --language en --oneie_output /var/kairosfs/resin/resin/output/en/oneie/m1_m2 --linking_output /var/kairosfs/resin/resin/output/en/linking/en.linking.wikidata.cs --coreference_output /var/kairosfs/resin/resin/output/en/coref
+      && /opt/conda/envs/aida_coreference/bin/python3.6 coref.py --ta 2 --language es --oneie_output /var/kairosfs/resin/resin/output/es/oneie/m1_m2 --linking_output /var/kairosfs/resin/resin/output/es/linking/es.linking.wikidata.cs --coreference_output /var/kairosfs/resin/resin/output/es/coref"
     volumes:
-      - data_dir:/data/resin
+      - root:/var/kairosfs
 
   temporal_relation:
     image: wenhycs/uiuc_kairos_temporal_relation:0.1
     container_name: temporal_relation
     working_dir: /roberta_temporal_relation
     command: bash -c "
-      python kairos_temporal_relation_pipeline.py --use_wait --wait_path /data/resin/output/en/coref --event_cold_start_filename /data/resin/output/en/coref/event.cs --ltf_path /data/resin/output/en/oneie/m1_m2/mention/en.nam.bio --output_filename /data/resin/output/en/temporal_relation.cs --use_tab
-      && python post_processing.py --input_cs /data/resin/output/en/temporal_relation.cs --filtered_output_cs /data/resin/output/en/filtered_temporal_relation.cs
-      && python sdf_converter.py --event_cs /data/resin/output/en/coref/event.cs --entity_cs /data/resin/output/en/coref/entity.cs --relation_cs /data/resin/output/en/coref/relation.cs --temporal_cs /data/resin/output/en/filtered_temporal_relation.cs --output_file /data/resin/output/en/graph_g.json"
+      python kairos_temporal_relation_pipeline.py --use_wait --wait_path /var/kairosfs/resin/resin/output/en/coref --event_cold_start_filename /var/kairosfs/resin/resin/output/en/coref/event.cs --ltf_path /var/kairosfs/resin/resin/output/en/oneie/m1_m2/mention/en.nam.bio --output_filename /var/kairosfs/resin/resin/output/en/temporal_relation.cs --use_tab
+      && python post_processing.py --input_cs /var/kairosfs/resin/resin/output/en/temporal_relation.cs --filtered_output_cs /var/kairosfs/resin/resin/output/en/filtered_temporal_relation.cs
+      && python sdf_converter.py --event_cs /var/kairosfs/resin/resin/output/en/coref/event.cs --entity_cs /var/kairosfs/resin/resin/output/en/coref/entity.cs --relation_cs /var/kairosfs/resin/resin/output/en/coref/relation.cs --temporal_cs /var/kairosfs/resin/resin/output/en/filtered_temporal_relation.cs --output_file /var/kairosfs/resin/resin/output/en/graph_g.json"
     volumes:
-      - data_dir:/data/resin
+      - root:/var/kairosfs
