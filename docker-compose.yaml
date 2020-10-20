@@ -22,7 +22,7 @@ volumes:
 
 services:
   edl_db:
-    image: mongo
+    image: mongo:4
     container_name: edl_db
     logging:
         driver: none
