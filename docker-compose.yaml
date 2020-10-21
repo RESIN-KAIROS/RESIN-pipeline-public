@@ -29,10 +29,10 @@ services:
     volumes:
       - edl_db:/data/db
 
-  kairos_data:
+  entrypoint:
     image: panx27/kairos_entrypoint:0.1
-    container_name: kairos_data
-    command: ["python", "./download.py", "/var/kairosfs"]
+    container_name: entrypoint
+    command: ["python", "./create_path_structure.py", "/var/kairosfs"]
     volumes:
       - root:/var/kairosfs
 
@@ -40,8 +40,8 @@ services:
     image: limteng/oneie_kairos:0.1
     container_name: oneie
     command: bash -c "
-      python /oneie/predict.py -i /var/kairosfs/resin/input/en/ltf -o /var/kairosfs/resin/resin/output/en/oneie -l en --output_hidden
-      && python /oneie/predict.py -i /var/kairosfs/resin/input/es/ltf -o /var/kairosfs/resin/resin/output/es/oneie -l es --output_hidden"
+      python /oneie/predict.py -i /var/kairosfs/resin/resin/output/en/ltf -o /var/kairosfs/resin/resin/output/en/oneie -l en --output_hidden
+      && python /oneie/predict.py -i /var/kairosfs/resin/resin/output/es/ltf -o /var/kairosfs/resin/resin/output/es/oneie -l es --output_hidden"
     volumes:
       - root:/var/kairosfs
 
