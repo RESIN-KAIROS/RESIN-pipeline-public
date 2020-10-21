@@ -17,13 +17,20 @@ version: "3"
 To control the startup order, please detect if a `_success` file has been generated from the previous container at the beginning of your code. For example,
 
 
-    success_file_path = '%s/_success' % input_dir
+    # Control startup order in docker-compose
+    if os.path.exists('%s/_success' % outdir):
+        msg = 'A successful file already exists in the current output dir, exit'
+        logger.info(msg)
+        exit(0)
+    # Check successful file from previous component
+    success_file_path = '%s/_success' % '/'.join(pnam.split('/')[:-1])
     s = time.time()
     while not os.path.exists(success_file_path):
-        logger.info('foo has been waiting for: %.3f seconds' % (time.time()-s))
+        logger.info('edl has been waiting for: %.3f seconds' % (time.time()-s))
         time.sleep(15)
-    os.remove(success_file_path)
+    # os.remove(success_file_path)
     logger.info('start...')
+
 
 And generate a `_success` at the end of your code.
 For example,
