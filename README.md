@@ -28,7 +28,6 @@ To control the startup order, please detect if a `_success` file has been genera
     while not os.path.exists(success_file_path):
         logger.info('edl has been waiting for: %.3f seconds' % (time.time()-s))
         time.sleep(15)
-    # os.remove(success_file_path)
     logger.info('start...')
 
 
