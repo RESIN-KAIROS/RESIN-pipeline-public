@@ -33,17 +33,7 @@ services:
     container_name: oneie
     command: bash -c "
       python /oneie/predict.py -i /var/kairosfs/resin/resin/output/en/ltf -o /var/kairosfs/resin/resin/output/en/oneie -l en --output_hidden
-      && python /oneie/predict.py -i /var/kairosfs/resin/resin/output/es/ltf -o /var/kairosfs/resin/resin/output/es/oneie -l es --output_hidden
-      && python /oneie/predict.py -i /var/kairosfs/resin/resin/output/es/translated_ltf -o /var/kairosfs/resin/resin/output/es/translated_oneie -l en --output_hidden"
-    volumes:
-      - root:/var/kairosfs
-
-  mt:
-    image: yrf1/kairos_mt:0.1
-    container_name: mt
-    command: bash -c "
-      python google_translate.py --src-ltf-dir /var/kairosfs/resin/resin/output/es/ltf --tgt-ltf-dir /var/kairosfs/resin/resin/output/es/translated_ltf
-      && sh run_mt_IEoutput.sh /var/kairosfs/resin/resin/output/es/ltf /var/kairosfs/resin/resin/output/es/translated_ltf /var/kairosfs/resin/resin/output/es/translated_oneie/ /var/kairosfs/resin/resin/output/es/mt_oneie"
+      && python /oneie/predict.py -i /var/kairosfs/resin/resin/output/es/ltf -o /var/kairosfs/resin/resin/output/es/oneie -l es --output_hidden"
     volumes:
       - root:/var/kairosfs
 
@@ -65,24 +55,4 @@ services:
       && python ./projs/docker_kairos/kairos.py es /var/kairosfs/resin/resin/output/es/oneie/m1_m2/mention/es.nam.tab /var/kairosfs/resin/resin/output/es/oneie/m1_m2/mention/es.nom.tab /var/kairosfs/resin/resin/output/es/oneie/m1_m2/mention/es.pro.tab /var/kairosfs/resin/resin/output/es/linking m36"
     volumes:
       - edl_data_dir:/data
-      - root:/var/kairosfs
-
-  coref:
-    image: laituan245/kairos_coref:0.1
-    container_name: kairos_coref
-    command: bash -c "
-      /opt/conda/envs/aida_coreference/bin/python3.6 coref.py --ta 2 --language en --oneie_output /var/kairosfs/resin/resin/output/en/oneie/m1_m2 --linking_output /var/kairosfs/resin/resin/output/en/linking/en.linking.wikidata.cs --coreference_output /var/kairosfs/resin/resin/output/en/coref
-      && /opt/conda/envs/aida_coreference/bin/python3.6 coref.py --ta 2 --language es --oneie_output /var/kairosfs/resin/resin/output/es/oneie/m1_m2 --linking_output /var/kairosfs/resin/resin/output/es/linking/es.linking.wikidata.cs --coreference_output /var/kairosfs/resin/resin/output/es/coref"
-    volumes:
-      - root:/var/kairosfs
-
-  temporal_relation:
-    image: wenhycs/uiuc_kairos_temporal_relation:0.1
-    container_name: temporal_relation
-    working_dir: /roberta_temporal_relation
-    command: bash -c "
-      python kairos_temporal_relation_pipeline.py --use_wait --wait_path /var/kairosfs/resin/resin/output/en/coref --event_cold_start_filename /var/kairosfs/resin/resin/output/en/coref/event.cs --ltf_path /var/kairosfs/resin/resin/output/en/oneie/m1_m2/mention/en.nam.bio --output_filename /var/kairosfs/resin/resin/output/en/temporal_relation.cs --use_tab
-      && python post_processing.py --input_cs /var/kairosfs/resin/resin/output/en/temporal_relation.cs --filtered_output_cs /var/kairosfs/resin/resin/output/en/filtered_temporal_relation.cs
-      && python sdf_converter.py --event_cs /var/kairosfs/resin/resin/output/en/coref/event.cs --entity_cs /var/kairosfs/resin/resin/output/en/coref/entity.cs --relation_cs /var/kairosfs/resin/resin/output/en/coref/relation.cs --temporal_cs /var/kairosfs/resin/resin/output/en/filtered_temporal_relation.cs --output_file /var/kairosfs/resin/resin/output/en/graph_g.json"
-    volumes:
       - root:/var/kairosfs
