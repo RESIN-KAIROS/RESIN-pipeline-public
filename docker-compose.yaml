@@ -32,27 +32,25 @@ services:
     image: limteng/oneie_kairos:0.1
     container_name: oneie
     command: bash -c "
-      python /oneie/predict.py -i /var/kairosfs/resin/resin/output/en/ltf -o /var/kairosfs/resin/resin/output/en/oneie -l en --output_hidden
-      && python /oneie/predict.py -i /var/kairosfs/resin/resin/output/es/ltf -o /var/kairosfs/resin/resin/output/es/oneie -l es --output_hidden"
+      python /oneie/predict.py -i /var/kairosfs/resin/input -o /var/kairosfs/resin/resin/output/en/oneie -l en --output_hidden"
     volumes:
       - root:/var/kairosfs
 
-  edl_db:
-    image: mongo:4
-    container_name: edl_db
-    logging:
-        driver: none
-    volumes:
-      - edl_db:/data/db
+  # edl_db:
+  #   image: mongo:4
+  #   container_name: edl_db
+  #   logging:
+  #       driver: none
+  #   volumes:
+  #     - edl_db:/data/db
 
-  edl:
-    image: panx27/edl:0.1
-    container_name: edl
-    links:
-      - "edl_db:mongo"
-    command: ./wait-for-it.sh mongo:27017 --timeout=15 -- bash -c "
-      python ./projs/docker_kairos/kairos.py en /var/kairosfs/resin/resin/output/en/oneie/m1_m2/mention/en.nam.tab /var/kairosfs/resin/resin/output/en/oneie/m1_m2/mention/en.nom.tab /var/kairosfs/resin/resin/output/en/oneie/m1_m2/mention/en.pro.tab /var/kairosfs/resin/resin/output/en/linking m36
-      && python ./projs/docker_kairos/kairos.py es /var/kairosfs/resin/resin/output/es/oneie/m1_m2/mention/es.nam.tab /var/kairosfs/resin/resin/output/es/oneie/m1_m2/mention/es.nom.tab /var/kairosfs/resin/resin/output/es/oneie/m1_m2/mention/es.pro.tab /var/kairosfs/resin/resin/output/es/linking m36"
-    volumes:
-      - edl_data_dir:/data
-      - root:/var/kairosfs
+  # edl:
+  #   image: panx27/edl:0.1
+  #   container_name: edl
+  #   links:
+  #     - "edl_db:mongo"
+  #   command: ./wait-for-it.sh mongo:27017 --timeout=15 -- bash -c "
+  #     python ./projs/docker_kairos/kairos.py en /var/kairosfs/resin/resin/output/en/oneie/m1_m2/mention/en.nam.tab /var/kairosfs/resin/resin/output/en/oneie/m1_m2/mention/en.nom.tab /var/kairosfs/resin/resin/output/en/oneie/m1_m2/mention/en.pro.tab /var/kairosfs/resin/resin/output/en/linking m36"
+  #   volumes:
+  #     - edl_data_dir:/data
+  #     - root:/var/kairosfs
