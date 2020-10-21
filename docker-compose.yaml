@@ -29,14 +29,14 @@ services:
     volumes:
       - edl_db:/data/db
 
-  preprocessing:
+  main:
     image: panx27/kairos_preprocessing:0.1
     container_name: preprocessing
     command: ["python", "./create_path_structure.py", "/var/kairosfs"]
     volumes:
       - root:/var/kairosfs
 
-  main:
+  oneie:
     image: limteng/oneie_kairos:0.1
     container_name: oneie
     command: bash -c "
