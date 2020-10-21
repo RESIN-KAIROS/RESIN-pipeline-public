@@ -29,19 +29,29 @@ services:
     volumes:
       - edl_db:/data/db
 
-  entrypoint:
-    image: panx27/kairos_entrypoint:0.1
-    container_name: entrypoint
+  preprocessing:
+    image: panx27/kairos_preprocessing:0.1
+    container_name: preprocessing
     command: ["python", "./create_path_structure.py", "/var/kairosfs"]
     volumes:
       - root:/var/kairosfs
 
-  oneie:
+  main:
     image: limteng/oneie_kairos:0.1
     container_name: oneie
     command: bash -c "
       python /oneie/predict.py -i /var/kairosfs/resin/resin/output/en/ltf -o /var/kairosfs/resin/resin/output/en/oneie -l en --output_hidden
-      && python /oneie/predict.py -i /var/kairosfs/resin/resin/output/es/ltf -o /var/kairosfs/resin/resin/output/es/oneie -l es --output_hidden"
+      && python /oneie/predict.py -i /var/kairosfs/resin/resin/output/es/ltf -o /var/kairosfs/resin/resin/output/es/oneie -l es --output_hidden
+      && python /oneie/predict.py -i /var/kairosfs/resin/resin/output/es/translated_ltf -o /var/kairosfs/resin/resin/output/es/translated_oneie -l en --output_hidden"
+    volumes:
+      - root:/var/kairosfs
+
+  mt:
+    image: yrf1/kairos_mt:0.1
+    container_name: mt
+    command: bash -c "
+      python google_translate.py --src-ltf-dir /var/kairosfs/resin/resin/output/es/ltf --tgt-ltf-dir /var/kairosfs/resin/resin/output/es/translated_ltf
+      && sh run_mt_IEoutput.sh /var/kairosfs/resin/resin/output/es/ltf /var/kairosfs/resin/resin/output/es/translated_ltf /var/kairosfs/resin/resin/output/es/translated_oneie/ /var/kairosfs/resin/resin/output/es/mt_oneie"
     volumes:
       - root:/var/kairosfs
 
