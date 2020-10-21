@@ -21,14 +21,6 @@ volumes:
       o: bind
 
 services:
-  edl_db:
-    image: mongo:4
-    container_name: edl_db
-    logging:
-        driver: none
-    volumes:
-      - edl_db:/data/db
-
   main:
     image: panx27/kairos_preprocessing:0.1
     container_name: preprocessing
@@ -54,6 +46,14 @@ services:
       && sh run_mt_IEoutput.sh /var/kairosfs/resin/resin/output/es/ltf /var/kairosfs/resin/resin/output/es/translated_ltf /var/kairosfs/resin/resin/output/es/translated_oneie/ /var/kairosfs/resin/resin/output/es/mt_oneie"
     volumes:
       - root:/var/kairosfs
+
+  edl_db:
+    image: mongo:4
+    container_name: edl_db
+    logging:
+        driver: none
+    volumes:
+      - edl_db:/data/db
 
   edl:
     image: panx27/edl:0.1
