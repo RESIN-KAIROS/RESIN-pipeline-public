@@ -22,35 +22,43 @@ volumes:
 
 services:
   main:
-    image: panx27/kairos_preprocessing:0.1
+    image: panx27/kairos_preprocessing:no_exit
     container_name: preprocessing
-    command: ["python", "./create_path_structure.py", "/var/kairosfs"]
+    command: python ./main.py /var/kairosfs --port 10100
     volumes:
       - root:/var/kairosfs
 
   oneie:
-    image: limteng/oneie_kairos:0.1
+    image: limteng/oneie_kairos:no_exit
     container_name: oneie
-    command: bash -c "
-      python /oneie/predict.py -i /var/kairosfs/resin/input -o /var/kairosfs/resin/resin/output/en/oneie -l en --output_hidden"
+    command: ./wait-for-it.sh main:10100 --timeout=0 -- bash -c "
+      python /oneie/predict.py -i /var/kairosfs/resin/input -o /var/kairosfs/resin/resin/output/en/oneie -l en --output_hidden --port 20200"
     volumes:
       - root:/var/kairosfs
 
-  # edl_db:
-  #   image: mongo:4
-  #   container_name: edl_db
-  #   logging:
-  #       driver: none
-  #   volumes:
-  #     - edl_db:/data/db
+  edl_db:
+    image: mongo:4
+    container_name: edl_db
+    logging:
+        driver: none
+    volumes:
+      - edl_db:/data/db
 
-  # edl:
-  #   image: panx27/edl:0.1
-  #   container_name: edl
-  #   links:
-  #     - "edl_db:mongo"
-  #   command: ./wait-for-it.sh mongo:27017 --timeout=15 -- bash -c "
-  #     python ./projs/docker_kairos/kairos.py en /var/kairosfs/resin/resin/output/en/oneie/m1_m2/mention/en.nam.tab /var/kairosfs/resin/resin/output/en/oneie/m1_m2/mention/en.nom.tab /var/kairosfs/resin/resin/output/en/oneie/m1_m2/mention/en.pro.tab /var/kairosfs/resin/resin/output/en/linking m36"
-  #   volumes:
-  #     - edl_data_dir:/data
-  #     - root:/var/kairosfs
+  edl:
+    image: panx27/edl:no_exit
+    container_name: edl
+    links:
+      - "edl_db:mongo"
+    command: ./wait-for-it.sh oneie:20200 --timeout=0 -- bash -c "
+      python -i ./projs/docker_kairos/kairos.py en /var/kairosfs/resin/resin/output/en/oneie/m1_m2/mention/en.nam.tab /var/kairosfs/resin/resin/output/en/oneie/m1_m2/mention/en.nom.tab /var/kairosfs/resin/resin/output/en/oneie/m1_m2/mention/en.pro.tab /var/kairosfs/resin/resin/output/en/linking --version m36 --port 30300"
+    volumes:
+      - edl_data_dir:/data
+      - root:/var/kairosfs
+
+  coref:
+    image: laituan245/kairos_coref:no_exit
+    container_name: kairos_coref
+    command: ./wait-for-it.sh edl:30300 --timeout=0 -- bash -c "
+      /opt/conda/envs/aida_coreference/bin/python3.6 coref.py --ta 2 --language en --oneie_output /var/kairosfs/resin/resin/output/en/oneie/m1_m2 --linking_output /var/kairosfs/resin/resin/output/en/linking/en.linking.wikidata.cs --coreference_output /var/kairosfs/resin/resin/output/en/coref --port 40400"
+    volumes:
+      - root:/var/kairosfs
