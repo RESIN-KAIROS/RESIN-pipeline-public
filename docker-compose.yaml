@@ -22,19 +22,23 @@ volumes:
 
 services:
   main:
-    image: panx27/kairos_preprocessing:no_exit
-    container_name: preprocessing
-    command: python ./main.py /var/kairosfs --port 10100
+    image: panx27/kairos_main_api:api
+    container_name: main
+    command: python ./main.py /var/kairosfs --port 10100 --oneie_addr oneie:20200 --edl_addr edl:20201 --coref_addr coref:20202 --temporal_addr temporal:20203 --mt_addr mt:20204
     volumes:
       - root:/var/kairosfs
+    ports:
+      - 10100:10100 # For local docker-compose test
 
   oneie:
-    image: limteng/oneie_kairos:no_exit
+    image: limteng/oneie_kairos:api
     container_name: oneie
     command: bash -c "
-      python /oneie/predict.py -i /var/kairosfs/resin/input -o /var/kairosfs/resin/resin/output/en/oneie -l en --output_hidden --port 20200"
+      python /oneie/app.py --tmp_dir /var/kairosfs/resin/resin/persist/oneie --port 20200"
     volumes:
       - root:/var/kairosfs
+    ports:
+      - 20200:20200 # For local docker-compose test
 
   edl-db:
     image: mongo:4
@@ -45,19 +49,44 @@ services:
       - edl-db-data:/data/db
 
   edl:
-    image: panx27/edl:no_exit
+    image: panx27/edl:api
     container_name: edl
     command: bash -c "
-      python ./projs/docker_kairos/kairos.py en /var/kairosfs/resin/resin/output/en/oneie/m1_m2/mention/en.nam.tab /var/kairosfs/resin/resin/output/en/oneie/m1_m2/mention/en.nom.tab /var/kairosfs/resin/resin/output/en/oneie/m1_m2/mention/en.pro.tab /var/kairosfs/resin/resin/output/en/linking --version m36 --port 30300"
+      python ./projs/docker_kairos/app.py --tmp_dir /var/kairosfs/resin/resin/persist/edl --port 20201"
     volumes:
       - edl-db-data:/data/db
       - edl-resources-data:/data/resources
       - root:/var/kairosfs
+    ports:
+      - 20201:20201 # For local docker-compose test
 
   coref:
-    image: laituan245/kairos_coref:no_exit
-    container_name: kairos_coref
+    image: laituan245/kairos_coref:api
+    container_name: coref
     command: bash -c "
-      /opt/conda/envs/aida_coreference/bin/python3.6 coref.py --ta 2 --language en --oneie_output /var/kairosfs/resin/resin/output/en/oneie/m1_m2 --linking_output /var/kairosfs/resin/resin/output/en/linking/en.linking.wikidata.cs --coreference_output /var/kairosfs/resin/resin/output/en/coref --port 40400"
+      /opt/conda/envs/aida_coreference/bin/python3.6 main.py --tmp /var/kairosfs/resin/resin/persist/coref --port 20202"
     volumes:
       - root:/var/kairosfs
+    ports:
+      - 20202:20202 # For local docker-compose test
+
+  temporal:
+    image: wenhycs/uiuc_kairos_temporal_relation:api
+    container_name: temporal
+    working_dir: /roberta_temporal_relation
+    command: bash -c "
+      python api_run.py 20203 /var/kairosfs/resin/resin/persist/temporal"
+    volumes:
+      - root:/var/kairosfs
+    ports:
+      - 20203:20203 # For local docker-compose test
+
+  mt:
+    image: yrf1/kairos_mt:api
+    container_name: mt
+    command: bash -c "
+      python web.py 20204"
+    volumes:
+      - root:/var/kairosfs
+    ports:
+      - 20204:20204 # For local docker-compose test
