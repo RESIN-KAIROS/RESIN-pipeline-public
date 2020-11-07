@@ -90,3 +90,15 @@ services:
       - root:/var/kairosfs
     ports:
       - 20204:20204 # For local docker-compose test
+      
+  visual:
+    image: xudonglin/cu_m2e2m
+    container_name: cu_m2e2m
+    command: bash -c "
+      python create_list.py ./ q4_frames.txt"
+    volumes:
+      - root:/var/kairosfs
+    ports:
+      - 20205:20205 # For local docker-compose test    
+      
+      
