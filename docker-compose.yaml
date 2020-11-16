@@ -91,17 +91,6 @@ services:
     ports:
       - 20204:20204 # For local docker-compose test
 
-  temporal:
-    image: wenhycs/uiuc_kairos_temporal_relation:api
-    container_name: temporal
-    working_dir: /roberta_temporal_relation
-    command: bash -c "
-      python api_run.py 20203 /var/kairosfs/resin/resin/persist/temporal"
-    volumes:
-      - root:/var/kairosfs
-    ports:
-      - 20203:20203 # For local docker-compose test
-      
   # visual:
   #   image: xudonglin/cu_m2e2m
   #   container_name: cu_m2e2m
