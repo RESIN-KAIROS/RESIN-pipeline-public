@@ -24,7 +24,7 @@ services:
   main:
     image: panx27/kairos_main_api:api
     container_name: main
-    command: python ./main.py /var/kairosfs --port 10100 --oneie_addr oneie:20200 --edl_addr edl:20201 --coref_addr coref:20202 --temporal_addr temporal:20203 --mt_addr mt:20204
+    command: python ./main.py /var/kairosfs --port 10100 --oneie_addr oneie:20200 --edl_addr edl:20201 --coref_addr coref:20202 --temporal_addr temporal:20203 --mt_addr mt:20204 --ext_addr ext:20205 # -> --oneie_addr oneie.resin-resin-enclave.svc.cluster.local:20200 --edl_addr edl.resin-resin-enclave.svc.cluster.local:20201 --coref_addr coref.resin-resin-enclave.svc.cluster.local:20202 --temporal_addr temporal.resin-resin-enclave.svc.cluster.local:20203 --mt_addr mt.resin-resin-enclave.svc.cluster.local:20204 --ext_addr ext.resin-resin-enclave.svc.cluster.local:20205
     volumes:
       - root:/var/kairosfs
     ports:
@@ -47,6 +47,8 @@ services:
         driver: none
     volumes:
       - edl-db-data:/data/db
+    ports:
+      - 27017:27017 # For local docker-compose test
 
   edl:
     image: panx27/edl:api
@@ -91,6 +93,16 @@ services:
     ports:
       - 20204:20204 # For local docker-compose test
 
+  ext:
+    image: panx27/kairos_extension:api
+    container_name: ext
+    command: bash -c "
+      python ./app.py --tmp_dir /var/kairosfs/resin/resin/persist/ext --port 20205"
+    volumes:
+      - root:/var/kairosfs
+    ports:
+      - 20205:20205 # For local docker-compose test
+
   # visual:
   #   image: xudonglin/cu_m2e2m
   #   container_name: cu_m2e2m
@@ -99,4 +111,4 @@ services:
   #   volumes:
   #     - root:/var/kairosfs
   #   ports:
-  #     - 20205:20205 # For local docker-compose test    
+  #     - 20209:20209 # For local docker-compose test    
