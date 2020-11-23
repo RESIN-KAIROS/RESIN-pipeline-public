@@ -84,7 +84,7 @@ services:
       - 20203:20203 # For local docker-compose test
 
   mt:
-    image: yrf1/kairos_mt:api
+    image: panx27/kairos_mt:api
     container_name: mt
     command: bash -c "
       python web.py 20204"
@@ -92,16 +92,6 @@ services:
       - root:${KAIROS_LIB}
     ports:
       - 20204:20204 # For local docker-compose test
-
-  ext:
-    image: panx27/kairos_extension:api
-    container_name: ext
-    command: bash -c "
-      python ./app.py --tmp_dir ${KAIROS_LIB}/${EXPERIMENT}/${PERFORMER_NAME}/persist/ext --port 20205"
-    volumes:
-      - root:${KAIROS_LIB}
-    ports:
-      - 20205:20205 # For local docker-compose test
 
   ext:
     image: panx27/kairos_extension:api
