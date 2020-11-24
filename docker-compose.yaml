@@ -114,7 +114,7 @@ services:
       - 20206:20206 # For local docker-compose test
 
   # visual:
-  #   image: xudonglin/cu_m2e2m
+  #   image: xudonglin/cu_m2e2m:0.2
   #   container_name: cu_m2e2m
   #   command: bash -c "
   #     python create_list.py ./ q4_frames.txt"
