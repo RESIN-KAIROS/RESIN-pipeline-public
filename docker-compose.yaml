@@ -22,9 +22,9 @@ volumes:
 
 services:
   main:
-    image: panx27/kairos_main_api:api
+    image: panx27/kairos_main_api:dev
     container_name: main
-    command: python ./main.py ${KAIROS_LIB} --experiment ${EXPERIMENT} --performer ${PERFORMER_NAME} --port 10100 --oneie_addr oneie:20200 --edl_addr edl:20201 --coref_addr coref:20202 --temporal_addr temporal:20203 --mt_addr mt:20204 --ext_addr ext:20205 --matching_addr matching:20206 # -> --oneie_addr oneie.resin-resin-enclave.svc.cluster.local:20200 --edl_addr edl.resin-resin-enclave.svc.cluster.local:20201 --coref_addr coref.resin-resin-enclave.svc.cluster.local:20202 --temporal_addr temporal.resin-resin-enclave.svc.cluster.local:20203 --mt_addr mt.resin-resin-enclave.svc.cluster.local:20204 --ext_addr ext.resin-resin-enclave.svc.cluster.local:20205 --matching_addr matching.resin-resin-enclave.svc.cluster.local:20206
+    command: python ./main.py ${KAIROS_LIB} --experiment ${EXPERIMENT} --performer ${PERFORMER_NAME} --port 10100 --oneie_addr oneie:20200 --edl_addr edl:20201 --coref_addr coref:20202 --temporal_addr temporal:20203 --mt_addr mt:20204 --ext_addr ext:20205 --matching_addr matching:20206 --upenn_temporal_addr upenn-temporal:30301 # -> --oneie_addr oneie.resin-resin-enclave.svc.cluster.local:20200 --edl_addr edl.resin-resin-enclave.svc.cluster.local:20201 --coref_addr coref.resin-resin-enclave.svc.cluster.local:20202 --temporal_addr temporal.resin-resin-enclave.svc.cluster.local:20203 --mt_addr mt.resin-resin-enclave.svc.cluster.local:20204 --ext_addr ext.resin-resin-enclave.svc.cluster.local:20205 --matching_addr matching.resin-resin-enclave.svc.cluster.local:20206 --upenn_temporal_addr upenn-temporal.resin-resin-enclave.svc.cluster.local:30301
     volumes:
       - root:${KAIROS_LIB}
     ports:
@@ -112,6 +112,16 @@ services:
       - root:${KAIROS_LIB}
     ports:
       - 20206:20206 # For local docker-compose test
+
+  upenn-temporal:
+    image: slash0bz/temporal_kairos:latest
+    container_name: upenn-temporal
+    command: bash -c "
+      python server.py 1 30301"
+    volumes:
+      - root:${KAIROS_LIB}
+    ports:
+      - 30301:30301 # For local docker-compose test
 
   # visual:
   #   image: xudonglin/cu_m2e2m:0.2
