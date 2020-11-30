@@ -24,7 +24,7 @@ services:
   main:
     image: panx27/kairos_main_api:dev
     container_name: main
-    command: python ./main.py ${KAIROS_LIB} --experiment ${EXPERIMENT} --performer ${PERFORMER_NAME} --port 10100 --oneie_addr oneie:20200 --edl_addr edl:20201 --coref_addr coref:20202 --temporal_addr temporal:20203 --mt_addr mt:20204 --ext_addr ext:20205 --matching_addr matching:20206 --upenn_temporal_addr upenn-temporal:30301 # -> --oneie_addr oneie.resin-resin-enclave.svc.cluster.local:20200 --edl_addr edl.resin-resin-enclave.svc.cluster.local:20201 --coref_addr coref.resin-resin-enclave.svc.cluster.local:20202 --temporal_addr temporal.resin-resin-enclave.svc.cluster.local:20203 --mt_addr mt.resin-resin-enclave.svc.cluster.local:20204 --ext_addr ext.resin-resin-enclave.svc.cluster.local:20205 --matching_addr matching.resin-resin-enclave.svc.cluster.local:20206 --upenn_temporal_addr upenn-temporal.resin-resin-enclave.svc.cluster.local:30301
+    command: python ./main.py ${KAIROS_LIB} --experiment ${EXPERIMENT} --performer ${PERFORMER_NAME} --port 10100 --oneie_addr oneie:20200 --edl_addr edl:20201 --coref_addr coref:20202 --temporal_addr temporal:20203 --mt_addr mt:20204 --ext_addr ext:20205 --matching_addr matching:20206  --relation_enrichment_addr relation-enrichment:20207 --upenn_temporal_addr upenn-temporal:30301 # -> --oneie_addr oneie.resin-resin-enclave.svc.cluster.local:20200 --edl_addr edl.resin-resin-enclave.svc.cluster.local:20201 --coref_addr coref.resin-resin-enclave.svc.cluster.local:20202 --temporal_addr temporal.resin-resin-enclave.svc.cluster.local:20203 --mt_addr mt.resin-resin-enclave.svc.cluster.local:20204 --ext_addr ext.resin-resin-enclave.svc.cluster.local:20205 --matching_addr matching.resin-resin-enclave.svc.cluster.local:20206 --upenn_temporal_addr upenn-temporal.resin-resin-enclave.svc.cluster.local:30301
     volumes:
       - root:${KAIROS_LIB}
     ports:
@@ -62,11 +62,21 @@ services:
     ports:
       - 20201:20201 # For local docker-compose test
 
+  relation-enrichment:
+    image: laituan245/relation_enrichment:api
+    container_name: relation-enrichment
+    command: bash -c "
+      /opt/conda/envs/aida_coreference/bin/python3.6 main.py --tmp_dir ${KAIROS_LIB}/${EXPERIMENT}/${PERFORMER_NAME}/persist/relation_enrichment --port 20207"
+    volumes:
+      - root:${KAIROS_LIB}
+    ports:
+      - 20207:20207 # For local docker-compose test
+
   coref:
     image: laituan245/kairos_coref:api
     container_name: coref
     command: bash -c "
-      /opt/conda/envs/aida_coreference/bin/python3.6 main.py --tmp ${KAIROS_LIB}/${EXPERIMENT}/${PERFORMER_NAME}/persist/coref --port 20202"
+      /opt/conda/envs/aida_coreference/bin/python3.6 main.py --tmp_dir ${KAIROS_LIB}/${EXPERIMENT}/${PERFORMER_NAME}/persist/coref --port 20202"
     volumes:
       - root:${KAIROS_LIB}
     ports:
@@ -131,4 +141,4 @@ services:
   #   volumes:
   #     - root:/var/kairosfs
   #   ports:
-  #     - 20209:20209 # For local docker-compose test    
+  #     - 20209:20209 # For local docker-compose test
