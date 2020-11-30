@@ -1,4 +1,4 @@
-version: "3"
+version: "2.3"
 
 volumes:
   root:
@@ -39,6 +39,9 @@ services:
       - root:${KAIROS_LIB}
     ports:
       - 20200:20200 # For local docker-compose test
+    runtime: nvidia # For local docker-compose test
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=2 # For local docker-compose test
 
   edl-db:
     image: mongo:4
@@ -73,7 +76,7 @@ services:
       - 20207:20207 # For local docker-compose test
 
   coref:
-    image: laituan245/kairos_coref:api
+    image: laituan245/kairos_coref:dev
     container_name: coref
     command: bash -c "
       /opt/conda/envs/aida_coreference/bin/python3.6 main.py --tmp_dir ${KAIROS_LIB}/${EXPERIMENT}/${PERFORMER_NAME}/persist/coref --port 20202"
@@ -81,6 +84,9 @@ services:
       - root:${KAIROS_LIB}
     ports:
       - 20202:20202 # For local docker-compose test
+    runtime: nvidia # For local docker-compose test
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=2 # For local docker-compose test
 
   temporal:
     image: wenhycs/uiuc_kairos_temporal_relation:api
@@ -92,6 +98,9 @@ services:
       - root:${KAIROS_LIB}
     ports:
       - 20203:20203 # For local docker-compose test
+    runtime: nvidia # For local docker-compose test
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=2 # For local docker-compose test
 
   mt:
     image: panx27/kairos_mt:api
@@ -114,7 +123,7 @@ services:
       - 20205:20205 # For local docker-compose test
 
   matching:
-    image: limteng/schema_matching:api
+    image: limteng/schema_matching:dev
     container_name: matching
     command: bash -c "
       python /schema_matching/app.py --schema_dir ${KAIROS_LIB}/${EXPERIMENT}/${PERFORMER_NAME}/schemas --port 20206"
@@ -132,6 +141,9 @@ services:
       - root:${KAIROS_LIB}
     ports:
       - 30301:30301 # For local docker-compose test
+    runtime: nvidia # For local docker-compose test
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=3 # For local docker-compose test
 
   # visual:
   #   image: xudonglin/cu_m2e2m:0.2
