@@ -159,7 +159,7 @@ services:
       - NVIDIA_VISIBLE_DEVICES=2 # For local docker-compose test
 
   # visual:
-  #   image: xudonglin/cu_m2e2m:0.2
+  #   image: xudonglin/cu_m2e2m:latest
   #   container_name: cu_m2e2m
   #   command: bash -c "
   #     find . -name '*.zip' -exec sh -c 'unzip -d `dirname {}` {}' ';'
