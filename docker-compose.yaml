@@ -22,7 +22,7 @@ volumes:
 
 services:
   main:
-    image: panx27/kairos_main_api:dev
+    image: panx27/kairos_main_api:api
     container_name: main
     command: python ./main.py ${KAIROS_LIB} --experiment ${EXPERIMENT} --performer ${PERFORMER_NAME} --port 10100 --oneie_addr oneie:20200 --edl_addr edl:20201 --coref_addr coref:20202 --temporal_addr temporal:20203 --mt_addr mt:20204 --ext_addr ext:20205 --matching_addr matching:20206 --relation_enrichment_addr relation-enrichment:20207 --gen_arg_addr gen-arg:20208 --upenn_temporal_addr upenn-temporal:30301 # -> --oneie_addr oneie.resin-resin-enclave.svc.cluster.local:20200 --edl_addr edl.resin-resin-enclave.svc.cluster.local:20201 --coref_addr coref.resin-resin-enclave.svc.cluster.local:20202 --temporal_addr temporal.resin-resin-enclave.svc.cluster.local:20203 --mt_addr mt.resin-resin-enclave.svc.cluster.local:20204 --ext_addr ext.resin-resin-enclave.svc.cluster.local:20205 --matching_addr matching.resin-resin-enclave.svc.cluster.local:20206 --relation_enrichment_addr relation-enrichment.resin-resin-enclave.svc.cluster.local:20207 --gen_arg_addr gen-arg.resin-resin-enclave.svc.cluster.local:20208 --upenn_temporal_addr upenn-temporal.resin-resin-enclave.svc.cluster.local:30301
     volumes:
@@ -76,7 +76,7 @@ services:
       - 20207:20207 # For local docker-compose test
 
   coref:
-    image: laituan245/kairos_coref:dev
+    image: laituan245/kairos_coref:api
     container_name: coref
     command: bash -c "
       /opt/conda/envs/aida_coreference/bin/python3.6 main.py --tmp_dir ${KAIROS_LIB}/${EXPERIMENT}/${PERFORMER_NAME}/persist/coref --port 20202"
@@ -123,7 +123,7 @@ services:
       - 20205:20205 # For local docker-compose test
 
   matching:
-    image: limteng/schema_matching:dev
+    image: limteng/schema_matching:api
     container_name: matching
     command: bash -c "
       python /schema_matching/app.py --schema_dir ${KAIROS_LIB}/${EXPERIMENT}/${PERFORMER_NAME}/schemas --port 20206"
