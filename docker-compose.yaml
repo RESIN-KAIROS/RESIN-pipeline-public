@@ -162,7 +162,14 @@ services:
   #   image: xudonglin/cu_m2e2m:0.2
   #   container_name: cu_m2e2m
   #   command: bash -c "
-  #     python create_list.py ./ q4_frames.txt"
+  #     find . -name '*.zip' -exec sh -c 'unzip -d `dirname {}` {}' ';'
+  #     mkdir ${KAIROS_LIB}/${EXPERIMENT}/${PERFORMER_NAME}/persist/visual/;
+  #     python ldcc.py ${KAIROS_LIB}/${EXPERIMENT}/${PERFORMER_NAME}/input/task1/data/source/jpg/jpg/ ${KAIROS_LIB}/${EXPERIMENT}/${PERFORMER_NAME}/persist/visual/;
+  #     python create_list.py ${KAIROS_LIB}/${EXPERIMENT}/${PERFORMER_NAME}/persist/visual/ jpg.txt；
+  #     echo CU imSitu predict..；
+  #     python ./JSL/inference.py --verb-path weights/verb_check_26.pth.tar --jsl-path weights/JSL_27.pth --image-file jpg.txt --batch-size 256;
+  #     python read_swig.py results.json jpg.p;
+  #     python graph_merging.py 20209 ./jpg.p  ${KAIROS_LIB}/${EXPERIMENT}/${PERFORMER_NAME}/input/task1/docs/parent_children.tab;"
   #   volumes:
   #     - root:/var/kairosfs
   #   ports:
