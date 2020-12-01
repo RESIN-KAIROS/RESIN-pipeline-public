@@ -162,7 +162,7 @@ services:
   #   image: xudonglin/cu_m2e2m:latest
   #   container_name: cu_m2e2m
   #   command: bash -c "
-  #     find . -name '*.zip' -exec sh -c 'unzip -d `dirname {}` {}' ';'
+  #     source activate kairos-env;
   #     mkdir ${KAIROS_LIB}/${EXPERIMENT}/${PERFORMER_NAME}/persist/visual/;
   #     python ldcc.py ${KAIROS_LIB}/${EXPERIMENT}/${PERFORMER_NAME}/input/task1/data/source/jpg/jpg/ ${KAIROS_LIB}/${EXPERIMENT}/${PERFORMER_NAME}/persist/visual/;
   #     python create_list.py ${KAIROS_LIB}/${EXPERIMENT}/${PERFORMER_NAME}/persist/visual/ jpg.txt；
