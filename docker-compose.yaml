@@ -171,6 +171,6 @@ services:
   #     python read_swig.py results.json jpg.p;
   #     python graph_merging.py 20209 ./jpg.p  ${KAIROS_LIB}/${EXPERIMENT}/${PERFORMER_NAME}/input/task1/docs/parent_children.tab;"
   #   volumes:
-  #     - root:/var/kairosfs
+  #     - root:${KAIROS_LIB}
   #   ports:
   #     - 20209:20209 # For local docker-compose test
