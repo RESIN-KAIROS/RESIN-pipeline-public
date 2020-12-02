@@ -166,5 +166,6 @@ services:
   #     python graph_merging.py 20209 ${KAIROS_LIB}/${EXPERIMENT}/${PERFORMER_NAME}/input/task1/data/source/jpg/jpg/ ${KAIROS_LIB}/${EXPERIMENT}/${PERFORMER_NAME}/persist/visual/  ${KAIROS_LIB}/${EXPERIMENT}/${PERFORMER_NAME}/input/task1/docs/parent_children.tab;"
   #   volumes:
   #     - root:${KAIROS_LIB}
+  #   shm_size: 16gb  
   #   ports:
   #     - 20209:20209 # For local docker-compose test
