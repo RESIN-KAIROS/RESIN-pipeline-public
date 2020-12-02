@@ -24,7 +24,7 @@ services:
   main:
     image: panx27/kairos_main_api:api
     container_name: main
-    command: python ./main.py ${KAIROS_LIB} --experiment ${EXPERIMENT} --performer ${PERFORMER_NAME} --port 10100 --oneie_addr oneie:20200 --edl_addr edl:20201 --coref_addr coref:20202 --temporal_addr temporal:20203 --mt_addr mt:20204 --ext_addr ext:20205 --matching_addr matching:20206 --relation_enrichment_addr relation-enrichment:20207 --gen_arg_addr gen-arg:20208 --cu_m2e2m_addr cu-m2e2m:20209 --upenn_temporal_addr upenn-temporal:30301 # -> --oneie_addr oneie.resin-resin-enclave.svc.cluster.local:20200 --edl_addr edl.resin-resin-enclave.svc.cluster.local:20201 --coref_addr coref.resin-resin-enclave.svc.cluster.local:20202 --temporal_addr temporal.resin-resin-enclave.svc.cluster.local:20203 --mt_addr mt.resin-resin-enclave.svc.cluster.local:20204 --ext_addr ext.resin-resin-enclave.svc.cluster.local:20205 --matching_addr matching.resin-resin-enclave.svc.cluster.local:20206 --relation_enrichment_addr relation-enrichment.resin-resin-enclave.svc.cluster.local:20207 --gen_arg_addr gen-arg.resin-resin-enclave.svc.cluster.local:20208 --cu_m2e2m_addr cu-m2e2m.resin-resin-enclave.svc.cluster.local:20209 --upenn_temporal_addr upenn-temporal.resin-resin-enclave.svc.cluster.local:30301
+    command: python ./main.py ${KAIROS_LIB} --experiment ${EXPERIMENT} --performer ${PERFORMER_NAME} --port 10100 --oneie_addr oneie:20200 --edl_addr edl:20201 --coref_addr coref:20202 --temporal_addr temporal:20203 --mt_addr mt:20204 --ext_addr ext:20205 --matching_addr matching:20206 --relation_enrichment_addr relation-enrichment:20207 --gen_arg_addr gen-arg:20208 --visual_addr visual:20209 --upenn_temporal_addr upenn-temporal:30301 # -> --oneie_addr oneie.resin-resin-enclave.svc.cluster.local:20200 --edl_addr edl.resin-resin-enclave.svc.cluster.local:20201 --coref_addr coref.resin-resin-enclave.svc.cluster.local:20202 --temporal_addr temporal.resin-resin-enclave.svc.cluster.local:20203 --mt_addr mt.resin-resin-enclave.svc.cluster.local:20204 --ext_addr ext.resin-resin-enclave.svc.cluster.local:20205 --matching_addr matching.resin-resin-enclave.svc.cluster.local:20206 --relation_enrichment_addr relation-enrichment.resin-resin-enclave.svc.cluster.local:20207 --gen_arg_addr gen-arg.resin-resin-enclave.svc.cluster.local:20208 --visual_addr visual.resin-resin-enclave.svc.cluster.local:20209 --upenn_temporal_addr upenn-temporal.resin-resin-enclave.svc.cluster.local:30301
     volumes:
       - root:${KAIROS_LIB}
     ports:
@@ -158,9 +158,9 @@ services:
     environment:
       - NVIDIA_VISIBLE_DEVICES=2 # For local docker-compose test
 
-  cu-m2e2m:
+  visual:
     image: xudonglin/cu_m2e2m:latest
-    container_name: cu-m2e2m
+    container_name: visual
     command: bash -c "
       source activate kairos-env;
       python graph_merging.py 20209 ${KAIROS_LIB}/${EXPERIMENT}/${PERFORMER_NAME}/input/task1/data/source/jpg/jpg/ ${KAIROS_LIB}/${EXPERIMENT}/${PERFORMER_NAME}/persist/visual/  ${KAIROS_LIB}/${EXPERIMENT}/${PERFORMER_NAME}/input/task1/docs/parent_children.tab;"
