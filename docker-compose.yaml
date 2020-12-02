@@ -170,5 +170,5 @@ services:
     ports:
       - 20209:20209 # For local docker-compose test
     runtime: nvidia # For local docker-compose test
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=2 # For local docker-compose test
+    #environment:
+    #  - NVIDIA_VISIBLE_DEVICES=2 # For local docker-compose test
