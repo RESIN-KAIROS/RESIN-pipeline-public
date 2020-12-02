@@ -163,15 +163,7 @@ services:
   #   container_name: cu_m2e2m
   #   command: bash -c "
   #     source activate kairos-env;
-  #     python get_g_prime.py 20210;
-  #     ls ${KAIROS_LIB}/${EXPERIMENT}/${PERFORMER_NAME}/input/task1/data/source/jpg/;
-  #     mkdir ${KAIROS_LIB}/${EXPERIMENT}/${PERFORMER_NAME}/persist/visual/;
-  #     python ldcc.py ${KAIROS_LIB}/${EXPERIMENT}/${PERFORMER_NAME}/input/task1/data/source/jpg/jpg/ ${KAIROS_LIB}/${EXPERIMENT}/${PERFORMER_NAME}/persist/visual/;
-  #     python create_list.py ${KAIROS_LIB}/${EXPERIMENT}/${PERFORMER_NAME}/persist/visual/ jpg.txt；
-  #     echo CU imSitu predict..；
-  #     python ./JSL/inference.py --verb-path weights/verb_check_26.pth.tar --jsl-path weights/JSL_27.pth --image-file jpg.txt --batch-size 256;
-  #     python read_swig_kairos.py results.json jpg.p;
-  #     python graph_merging.py 20209 ./jpg.p  ${KAIROS_LIB}/${EXPERIMENT}/${PERFORMER_NAME}/input/task1/docs/parent_children.tab;"
+  #     python graph_merging.py 20209 ${KAIROS_LIB}/${EXPERIMENT}/${PERFORMER_NAME}/input/task1/data/source/jpg/jpg/ ${KAIROS_LIB}/${EXPERIMENT}/${PERFORMER_NAME}/persist/visual/  ${KAIROS_LIB}/${EXPERIMENT}/${PERFORMER_NAME}/input/task1/docs/parent_children.tab;"
   #   volumes:
   #     - root:${KAIROS_LIB}
   #   ports:
