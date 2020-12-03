@@ -171,4 +171,4 @@ services:
       - 20209:20209 # For local docker-compose test
     runtime: nvidia # For local docker-compose test
     environment:
-     - NVIDIA_VISIBLE_DEVICES=2 # For local docker-compose test
+     - NVIDIA_VISIBLE_DEVICES=3 # For local docker-compose test
