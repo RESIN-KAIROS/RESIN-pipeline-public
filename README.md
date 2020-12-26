@@ -27,7 +27,7 @@ RESIN TA2 pipeline for KAIROS 2020 evaluation
    
 6. Start APIs using: `docker-compose up`
 
-7. Send the following POST message to the main API to start processing:
+7. Send the following POST message to the main API (https://github.com/RESIN-KAIROS/entrypoint) to start processing:
 
        curl -X POST --header "Content-Type: application/json" -d '{"id": "3fa85f64-5717-4562-b3fc-2c963f66afa6", "runId": "my_run_id", "sender": "string", "time": "2020-11-25T03:34:48.008Z", "content": {"data": "Example source document content here."}, "contentUri": "s3://kairos-experiment-data/performera/"}' http://0.0.0.0:10100/kairos/entrypoint
 
