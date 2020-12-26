@@ -6,7 +6,7 @@ RESIN TA2 pipeline for KAIROS 2020 evaluation
 
 2. Run `cd ta2-pipeline`
 
-3. Setup ${KAIROS_LIB} dir: 
+3. Setup `${KAIROS_LIB}` dir: 
    - https://github.com/RESIN-KAIROS/ta2-pipeline/blob/api/docker-compose.yaml#L8;
 
    - Uncompress KAIROS data package and put everything under `${KAIROS_LIB}/resin/resin/input/task1`;
