@@ -1,13 +1,13 @@
-# ta2-pipeline
-RESIN TA2 pipeline for KAIROS 2020 evaluation
+# RESIN-pipeline
+RESIN: Schema-Guided Cross-document Cross-lingual Cross-media Information Extraction and Event Tracking System
 
-## external edl_data
-1. Run `git clone https://github.com/RESIN-KAIROS/ta2-pipeline`
+## Instructions
+1. Run `git clone https://github.com/RESIN-KAIROS/RESIN-pipeline-public`
 
-2. Run `cd ta2-pipeline`
+2. Run `cd RESIN-pipeline-public`
 
 3. Setup `${KAIROS_LIB}` dir: 
-   - https://github.com/RESIN-KAIROS/ta2-pipeline/blob/api/docker-compose.yaml#L8;
+   - https://github.com/RESIN-KAIROS/RESIN-pipeline-public/blob/api/docker-compose.yaml#L8;
 
    - Uncompress KAIROS data package and put everything under `${KAIROS_LIB}/resin/resin/input/task1`;
    
@@ -18,12 +18,12 @@ RESIN TA2 pipeline for KAIROS 2020 evaluation
 4. Download and uncompress external data http://159.89.180.81/demo/resources/edl_data.tar.gz;
 
    Set up dirs: 
-   - https://github.com/RESIN-KAIROS/ta2-pipeline/blob/api/docker-compose.yaml#L14
-   - https://github.com/RESIN-KAIROS/ta2-pipeline/blob/api/docker-compose.yaml#L20
+   - https://github.com/RESIN-KAIROS/RESIN-pipeline-public/blob/api/docker-compose.yaml#L14
+   - https://github.com/RESIN-KAIROS/RESIN-pipeline-public/blob/api/docker-compose.yaml#L20
    
 5. Set up device number for each GPU-based component, e.g.,
    
-   https://github.com/RESIN-KAIROS/ta2-pipeline/blob/api/docker-compose.yaml#L44
+   https://github.com/RESIN-KAIROS/RESIN-pipeline-public/blob/api/docker-compose.yaml#L44
    
 6. Start APIs using: `docker-compose up`
 
