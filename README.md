@@ -9,7 +9,7 @@ RESIN: Schema-Guided Cross-document Cross-lingual Cross-media Information Extrac
 3. Setup `${KAIROS_LIB}` dir: 
    - https://github.com/RESIN-KAIROS/RESIN-pipeline-public/blob/api/docker-compose.yaml#L8;
 
-   - Uncompress KAIROS data package and put everything under `${KAIROS_LIB}/resin/resin/input/task1`;
+   - Uncompress data package (e.g, LDC2020E33) and put everything under `${KAIROS_LIB}/resin/resin/input/task1`;
    
      e.g., `${KAIROS_LIB}/resin/resin/input/task1/{data,docs,tools}`
    
@@ -36,3 +36,6 @@ RESIN: Schema-Guided Cross-document Cross-lingual Cross-media Information Extrac
 8. Send the following GET message to check the status:
 
        curl -X GET  http://0.0.0.0:10100/kairos/status
+
+## Source code
+You can access the source code by viewing contents from each docker component in the docker-compose file.
