@@ -38,4 +38,14 @@ RESIN: Schema-Guided Cross-document Cross-lingual Cross-media Information Extrac
        curl -X GET  http://0.0.0.0:10100/kairos/status
 
 ## Source code
-You can access the source code by viewing contents from each docker component in the docker-compose file.
+Please view source code of each docker component in the docker-compose file.
+
+## Reference
+```
+@article{wen2021resin,
+  author    = {Haoyang Wen and Ying Lin and Tuan M. Lai and Xiaoman Pan and Sha Li and Xudong Lin and Ben Zhou and Manling Li and Haoyu Wang and Hongming Zhang and Xiaodong Yu and Alexander Dong and Zhenhailong Wang and Yi R. Fung and Piyush Mishra and Qing Lyu and Dídac Surís and Brian Chen and Susan W. Brown and Martha Palmer and Chris Callison-Burch and Carl Vondrick and Jiawei Han and Dan Roth and Shih-Fu Chang and Heng Ji},
+  title     = {RESIN: A Dockerized Schema-Guided Cross-document Cross-lingual Cross-media Information Extraction and Event Tracking System},
+  journal   = {NAACL Demo Track},
+  year      = {2021}
+}
+```
